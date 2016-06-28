@@ -8,6 +8,7 @@ import android.view.View;
 import com.idonans.acommon.lang.CommonLog;
 import com.idonans.acommon.util.ViewUtil;
 import com.idonans.ishare.qq.IShareQQHelper;
+import com.tencent.connect.share.QQShare;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.UiError;
 
@@ -23,11 +24,25 @@ public class MainActivity extends AppCompatActivity {
         mIShareQQHelper = new IShareQQHelper(IShareConfig.QQ_APP_ID, mQQUIListener);
 
         setContentView(R.layout.activity_main);
+
         View qqLogin = ViewUtil.findViewByID(this, R.id.qq_login);
         qqLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mIShareQQHelper.getTencent().login(MainActivity.this, "get_simple_userinfo", mIShareQQHelper.getListener());
+            }
+        });
+
+        View qqShare = ViewUtil.findViewByID(this, R.id.qq_share);
+        qqShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle params = new Bundle();
+                params.putString(QQShare.SHARE_TO_QQ_TITLE, "title");
+                params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, "https://www.github.com/idonans/ishare");
+                params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "https://avatars3.githubusercontent.com/u/4043830?v=3&s=460");
+                params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "summary");
+                mIShareQQHelper.getTencent().shareToQQ(MainActivity.this, params, mIShareQQHelper.getListener());
             }
         });
     }
@@ -43,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onError(UiError uiError) {
-            CommonLog.d(TAG + " onError " + uiError);
+            CommonLog.d(TAG + " onError " + uiError.errorCode + ", " + uiError.errorDetail + ", " + uiError.errorMessage);
         }
 
         @Override
