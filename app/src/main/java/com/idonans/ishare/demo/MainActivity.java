@@ -64,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
                 mIShareQQHelper.getTencent().shareToQzone(MainActivity.this, params, mIShareQQHelper.getListener());
             }
         });
+
+        View weiboLogin = ViewUtil.findViewByID(this, R.id.weibo_login);
+        View weiboShare = ViewUtil.findViewByID(this, R.id.weibo_share);
     }
 
     private IUiListener mQQUIListener = new IUiListener() {

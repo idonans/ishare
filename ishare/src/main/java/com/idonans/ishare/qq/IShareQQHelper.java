@@ -12,6 +12,7 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /**
+ * QQ 登陆分享，Qzone 分享
  * Created by pengji on 16-6-28.
  */
 public final class IShareQQHelper implements Closeable {
