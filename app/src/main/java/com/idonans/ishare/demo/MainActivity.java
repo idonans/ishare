@@ -42,8 +42,21 @@ public class MainActivity extends AppCompatActivity {
                 params.putString(QQShare.SHARE_TO_QQ_TITLE, "title");
                 params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, "https://www.github.com/idonans/ishare");
                 params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "https://avatars3.githubusercontent.com/u/4043830?v=3&s=460");
-                params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "summary");
+                params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "ishare qq");
                 mIShareQQHelper.getTencent().shareToQQ(MainActivity.this, params, mIShareQQHelper.getListener());
+            }
+        });
+
+        View qzoneShare = ViewUtil.findViewByID(this, R.id.qzone_share);
+        qzoneShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle params = new Bundle();
+                params.putString(QQShare.SHARE_TO_QQ_TITLE, "title");
+                params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, "https://www.github.com/idonans/ishare");
+                params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "https://avatars3.githubusercontent.com/u/4043830?v=3&s=460");
+                params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "ishare qzone");
+                mIShareQQHelper.getTencent().shareToQzone(MainActivity.this, params, mIShareQQHelper.getListener());
             }
         });
     }
