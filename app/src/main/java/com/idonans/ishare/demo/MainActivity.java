@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.idonans.acommon.lang.CommonLog;
+import com.idonans.acommon.util.IOUtil;
 import com.idonans.acommon.util.ViewUtil;
 import com.idonans.ishare.qq.IShareQQHelper;
 import com.tencent.connect.share.QQShare;
@@ -72,6 +73,12 @@ public class MainActivity extends AppCompatActivity {
         if (!mIShareQQHelper.onActivityResult(requestCode, resultCode, data)) {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        IOUtil.closeQuietly(mIShareQQHelper);
     }
 
 }

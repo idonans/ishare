@@ -6,18 +6,23 @@ import com.idonans.acommon.AppContext;
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
+
+import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * Created by pengji on 16-6-28.
  */
-public class IShareQQHelper {
+public final class IShareQQHelper implements Closeable {
 
     private final Tencent mTencent;
-    private final IUiListener mListener;
+    private final IUiListenerAdapter mListener;
 
     public IShareQQHelper(String appId, IUiListener listener) {
         mTencent = Tencent.createInstance(appId, AppContext.getContext());
-        mListener = listener;
+        mListener = new IUiListenerAdapter();
+        mListener.setOutListener(listener);
     }
 
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -40,6 +45,41 @@ public class IShareQQHelper {
 
     public IUiListener getListener() {
         return mListener;
+    }
+
+    @Override
+    public void close() throws IOException {
+        mListener.setOutListener(null);
+    }
+
+    private class IUiListenerAdapter implements IUiListener {
+
+        private IUiListener mOutListener;
+
+        public void setOutListener(IUiListener outListener) {
+            mOutListener = outListener;
+        }
+
+        @Override
+        public void onComplete(Object o) {
+            if (mOutListener != null) {
+                mOutListener.onComplete(o);
+            }
+        }
+
+        @Override
+        public void onError(UiError uiError) {
+            if (mOutListener != null) {
+                mOutListener.onError(uiError);
+            }
+        }
+
+        @Override
+        public void onCancel() {
+            if (mOutListener != null) {
+                mOutListener.onCancel();
+            }
+        }
     }
 
 }
