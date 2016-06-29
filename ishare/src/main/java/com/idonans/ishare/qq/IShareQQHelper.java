@@ -1,6 +1,9 @@
 package com.idonans.ishare.qq;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
 
 import com.idonans.acommon.AppContext;
 import com.tencent.connect.common.Constants;
@@ -40,10 +43,22 @@ public final class IShareQQHelper implements Closeable {
         }
     }
 
-    public Tencent getTencent() {
-        return mTencent;
+    /**
+     * 如果没有安装 QQ 客户端，或者 QQ 版本不支持，将返回 null.
+     *
+     * @param activity
+     * @return
+     */
+    @CheckResult
+    public Tencent getTencent(Activity activity) {
+        if (mTencent.isSupportSSOLogin(activity)) {
+            return mTencent;
+        } else {
+            return null;
+        }
     }
 
+    @NonNull
     public IUiListener getListener() {
         return mListener;
     }

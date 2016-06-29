@@ -12,6 +12,7 @@ import com.idonans.ishare.qq.IShareQQHelper;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
 import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
 import java.util.ArrayList;
@@ -34,7 +35,12 @@ public class MainActivity extends AppCompatActivity {
         qqLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mIShareQQHelper.getTencent().login(MainActivity.this, "get_simple_userinfo", mIShareQQHelper.getListener());
+                Tencent tencent = mIShareQQHelper.getTencent(MainActivity.this);
+                if (tencent == null) {
+                    IShareConfig.showQQClientWarning();
+                } else {
+                    tencent.login(MainActivity.this, "get_simple_userinfo", mIShareQQHelper.getListener());
+                }
             }
         });
 
@@ -42,12 +48,17 @@ public class MainActivity extends AppCompatActivity {
         qqShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle params = new Bundle();
-                params.putString(QQShare.SHARE_TO_QQ_TITLE, "title");
-                params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, "https://www.github.com/idonans/ishare");
-                params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "https://avatars3.githubusercontent.com/u/4043830?v=3&s=460");
-                params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "ishare qq");
-                mIShareQQHelper.getTencent().shareToQQ(MainActivity.this, params, mIShareQQHelper.getListener());
+                Tencent tencent = mIShareQQHelper.getTencent(MainActivity.this);
+                if (tencent == null) {
+                    IShareConfig.showQQClientWarning();
+                } else {
+                    Bundle params = new Bundle();
+                    params.putString(QQShare.SHARE_TO_QQ_TITLE, "title");
+                    params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, "https://www.github.com/idonans/ishare");
+                    params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "https://avatars3.githubusercontent.com/u/4043830?v=3&s=460");
+                    params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "ishare qq");
+                    tencent.shareToQQ(MainActivity.this, params, mIShareQQHelper.getListener());
+                }
             }
         });
 
@@ -55,13 +66,18 @@ public class MainActivity extends AppCompatActivity {
         qzoneShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle params = new Bundle();
-                params.putString(QzoneShare.SHARE_TO_QQ_TITLE, "title");
-                params.putString(QzoneShare.SHARE_TO_QQ_TARGET_URL, "https://www.github.com/idonans/ishare");
-                params.putStringArrayList(QzoneShare.SHARE_TO_QQ_IMAGE_URL,
-                        new ArrayList<>(Arrays.asList("https://avatars3.githubusercontent.com/u/4043830?v=3&s=460")));
-                params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, "ishare qzone");
-                mIShareQQHelper.getTencent().shareToQzone(MainActivity.this, params, mIShareQQHelper.getListener());
+                Tencent tencent = mIShareQQHelper.getTencent(MainActivity.this);
+                if (tencent == null) {
+                    IShareConfig.showQQClientWarning();
+                } else {
+                    Bundle params = new Bundle();
+                    params.putString(QzoneShare.SHARE_TO_QQ_TITLE, "title");
+                    params.putString(QzoneShare.SHARE_TO_QQ_TARGET_URL, "https://www.github.com/idonans/ishare");
+                    params.putStringArrayList(QzoneShare.SHARE_TO_QQ_IMAGE_URL,
+                            new ArrayList<>(Arrays.asList("https://avatars3.githubusercontent.com/u/4043830?v=3&s=460")));
+                    params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, "ishare qzone");
+                    tencent.shareToQzone(MainActivity.this, params, mIShareQQHelper.getListener());
+                }
             }
         });
 
