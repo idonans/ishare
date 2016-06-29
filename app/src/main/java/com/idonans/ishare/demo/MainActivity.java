@@ -10,6 +10,7 @@ import com.idonans.acommon.util.IOUtil;
 import com.idonans.acommon.util.ViewUtil;
 import com.idonans.ishare.qq.IShareQQHelper;
 import com.tencent.connect.share.QQShare;
+import com.tencent.connect.share.QzoneShare;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.UiError;
 
@@ -55,11 +56,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Bundle params = new Bundle();
-                params.putString(QQShare.SHARE_TO_QQ_TITLE, "title");
-                params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, "https://www.github.com/idonans/ishare");
-                params.putStringArrayList(QQShare.SHARE_TO_QQ_IMAGE_URL,
+                params.putString(QzoneShare.SHARE_TO_QQ_TITLE, "title");
+                params.putString(QzoneShare.SHARE_TO_QQ_TARGET_URL, "https://www.github.com/idonans/ishare");
+                params.putStringArrayList(QzoneShare.SHARE_TO_QQ_IMAGE_URL,
                         new ArrayList<>(Arrays.asList("https://avatars3.githubusercontent.com/u/4043830?v=3&s=460")));
-                params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "ishare qzone");
+                params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, "ishare qzone");
                 mIShareQQHelper.getTencent().shareToQzone(MainActivity.this, params, mIShareQQHelper.getListener());
             }
         });
