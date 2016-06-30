@@ -6,6 +6,7 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 
 import com.idonans.acommon.AppContext;
+import com.idonans.ishare.IShareConfig;
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
@@ -23,8 +24,8 @@ public final class IShareQQHelper implements Closeable {
     private final Tencent mTencent;
     private final IUiListenerAdapter mListener;
 
-    public IShareQQHelper(String appId, IUiListener listener) {
-        mTencent = Tencent.createInstance(appId, AppContext.getContext());
+    public IShareQQHelper(IUiListener listener) {
+        mTencent = Tencent.createInstance(IShareConfig.getQQAppId(), AppContext.getContext());
         mListener = new IUiListenerAdapter();
         mListener.setOutListener(listener);
     }
