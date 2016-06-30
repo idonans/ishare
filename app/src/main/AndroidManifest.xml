@@ -29,6 +29,12 @@
                 <data android:scheme="tencent1105503788"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.idonans.ishare.demo.wxapi.WXEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:noHistory="true">
+        </activity>
     </application>
 
 </manifest>

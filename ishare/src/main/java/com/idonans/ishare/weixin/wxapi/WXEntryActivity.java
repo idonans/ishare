@@ -13,27 +13,27 @@ import com.idonans.ishare.weixin.IShareWeixinHelper;
  */
 public class WXEntryActivity extends CommonActivity {
 
-    private IShareWeixinHelper mShareWeixinHelper;
+    private IShareWeixinHelper mIShareWeixinHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mShareWeixinHelper = new IShareWeixinHelper();
-        mShareWeixinHelper.getApi().handleIntent(getIntent(), IShareWeixinHelper.getGlobalWXAPIEventHandler());
+        mIShareWeixinHelper = new IShareWeixinHelper();
+        mIShareWeixinHelper.getApi().handleIntent(getIntent(), IShareWeixinHelper.getGlobalWXAPIEventHandler());
         finish();
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        mShareWeixinHelper.getApi().handleIntent(intent, IShareWeixinHelper.getGlobalWXAPIEventHandler());
+        mIShareWeixinHelper.getApi().handleIntent(intent, IShareWeixinHelper.getGlobalWXAPIEventHandler());
         finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        IOUtil.closeQuietly(mShareWeixinHelper);
+        IOUtil.closeQuietly(mIShareWeixinHelper);
     }
 
 }

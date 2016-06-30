@@ -11,8 +11,10 @@ import com.idonans.acommon.lang.CommonLog;
 import com.idonans.acommon.util.IOUtil;
 import com.idonans.acommon.util.ViewUtil;
 import com.idonans.ishare.qq.IShareQQHelper;
+import com.idonans.ishare.weixin.IShareWeixinHelper;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
+import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -32,12 +34,14 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private IShareQQHelper mIShareQQHelper;
+    private IShareWeixinHelper mIShareWeixinHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mIShareQQHelper = new IShareQQHelper(mQQUIListener);
+        mIShareWeixinHelper = new IShareWeixinHelper();
 
         setContentView(R.layout.activity_main);
 
@@ -91,6 +95,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        View weixinLogin = ViewUtil.findViewByID(this, R.id.weixin_login);
+        weixinLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final SendAuth.Req req = new SendAuth.Req();
+                req.scope = "post_timeline";
+                req.state = "none";
+                mIShareWeixinHelper.getApi().sendReq(req);
+            }
+        });
+
+        View weixinShare = ViewUtil.findViewByID(this, R.id.weixin_share);
+        weixinShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO
+            }
+        });
+
         View weiboLogin = ViewUtil.findViewByID(this, R.id.weibo_login);
         View weiboShare = ViewUtil.findViewByID(this, R.id.weibo_share);
     }
@@ -126,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         IOUtil.closeQuietly(mIShareQQHelper);
+        IOUtil.closeQuietly(mIShareWeixinHelper);
     }
 
 }
