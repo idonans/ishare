@@ -14,7 +14,9 @@ import com.idonans.ishare.qq.IShareQQHelper;
 import com.idonans.ishare.weixin.IShareWeixinHelper;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
+import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
+import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mIShareQQHelper = new IShareQQHelper(mQQUIListener);
-        mIShareWeixinHelper = new IShareWeixinHelper();
+        mIShareWeixinHelper = new IShareWeixinHelper(mWXListener);
 
         setContentView(R.layout.activity_main);
 
@@ -99,10 +101,15 @@ public class MainActivity extends AppCompatActivity {
         weixinLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final SendAuth.Req req = new SendAuth.Req();
-                req.scope = "post_timeline";
-                req.state = "none";
-                mIShareWeixinHelper.getApi().sendReq(req);
+                IWXAPI api = mIShareWeixinHelper.getApi();
+                if (api == null) {
+                    showWeixinClientWarning();
+                } else {
+                    SendAuth.Req req = new SendAuth.Req();
+                    req.scope = "snsapi_userinfo";
+                    req.state = mIShareWeixinHelper.getState();
+                    api.sendReq(req);
+                }
             }
         });
 
@@ -138,11 +145,27 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private IShareWeixinHelper.IWXListener mWXListener = new IShareWeixinHelper.IWXListener() {
+
+        private static final String TAG = "MainActivity mWXListener";
+
+        @Override
+        public void onWXCallback(BaseResp baseResp) {
+            CommonLog.d(TAG + " onWXCallback " + baseResp);
+        }
+    };
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (!mIShareQQHelper.onActivityResult(requestCode, resultCode, data)) {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mIShareWeixinHelper.resume();
     }
 
     @Override

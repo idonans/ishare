@@ -69,7 +69,7 @@ public final class IShareQQHelper implements Closeable {
         mListener.setOutListener(null);
     }
 
-    private class IUiListenerAdapter implements IUiListener {
+    private static class IUiListenerAdapter implements IUiListener {
 
         private IUiListener mOutListener;
 
