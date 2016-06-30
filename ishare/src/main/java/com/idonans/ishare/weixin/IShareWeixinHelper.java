@@ -29,6 +29,7 @@ public final class IShareWeixinHelper implements Closeable {
 
     public IShareWeixinHelper(IWXListener listener) {
         mApi = WXAPIFactory.createWXAPI(AppContext.getContext(), IShareConfig.getWeixinAppKey(), false);
+        mApi.registerApp(IShareConfig.getWeixinAppKey());
         mListener = new IWXListenerAdapter();
         mListener.setOutListener(listener);
         mState = UUID.randomUUID().toString();
