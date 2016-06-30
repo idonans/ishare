@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
+import com.idonans.acommon.AppContext;
 import com.idonans.acommon.lang.CommonLog;
 import com.idonans.acommon.util.IOUtil;
 import com.idonans.acommon.util.ViewUtil;
@@ -20,6 +22,14 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static void showQQClientWarning() {
+        Toast.makeText(AppContext.getContext(), "QQ客户端未安装或版本过低", Toast.LENGTH_SHORT).show();
+    }
+
+    public static void showWeixinClientWarning() {
+        Toast.makeText(AppContext.getContext(), "微信客户端未安装或版本过低", Toast.LENGTH_SHORT).show();
+    }
+
     private static final String TAG = "MainActivity";
     private IShareQQHelper mIShareQQHelper;
 
@@ -27,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mIShareQQHelper = new IShareQQHelper(IShareConfig.QQ_APP_ID, mQQUIListener);
+        mIShareQQHelper = new IShareQQHelper(mQQUIListener);
 
         setContentView(R.layout.activity_main);
 
@@ -37,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Tencent tencent = mIShareQQHelper.getTencent(MainActivity.this);
                 if (tencent == null) {
-                    IShareConfig.showQQClientWarning();
+                    showQQClientWarning();
                 } else {
                     tencent.login(MainActivity.this, "get_simple_userinfo", mIShareQQHelper.getListener());
                 }
@@ -50,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Tencent tencent = mIShareQQHelper.getTencent(MainActivity.this);
                 if (tencent == null) {
-                    IShareConfig.showQQClientWarning();
+                    showQQClientWarning();
                 } else {
                     Bundle params = new Bundle();
                     params.putString(QQShare.SHARE_TO_QQ_TITLE, "title");
@@ -68,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Tencent tencent = mIShareQQHelper.getTencent(MainActivity.this);
                 if (tencent == null) {
-                    IShareConfig.showQQClientWarning();
+                    showQQClientWarning();
                 } else {
                     Bundle params = new Bundle();
                     params.putString(QzoneShare.SHARE_TO_QQ_TITLE, "title");
