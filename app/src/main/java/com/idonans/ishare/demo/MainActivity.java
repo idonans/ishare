@@ -16,6 +16,9 @@ import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
 import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
+import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.sdk.modelmsg.WXTextObject;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
@@ -23,6 +26,7 @@ import com.tencent.tauth.UiError;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -117,7 +121,20 @@ public class MainActivity extends AppCompatActivity {
         weixinShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
+                IWXAPI api = mIShareWeixinHelper.getApi();
+                if (api == null) {
+                    showWeixinClientWarning();
+                } else {
+                    WXTextObject textObject = new WXTextObject("ishare weixin text");
+                    WXMediaMessage mediaMessage = new WXMediaMessage(textObject);
+                    mediaMessage.description = "ishare weixin text desc";
+
+                    SendMessageToWX.Req req = new SendMessageToWX.Req();
+                    req.transaction = UUID.randomUUID().toString() + "#test text#" + System.currentTimeMillis();
+                    req.message = mediaMessage;
+                    req.scene = SendMessageToWX.Req.WXSceneSession;
+                    api.sendReq(req);
+                }
             }
         });
 
