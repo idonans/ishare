@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.idonans.acommon.App;
 import com.idonans.ishare.IShareConfig;
+import com.sina.weibo.sdk.utils.LogUtil;
 import com.squareup.leakcanary.LeakCanary;
 
 /**
@@ -29,6 +30,10 @@ public class MainApplication extends Application {
                 .setContext(this)
                 .setBuildConfigAdapter(new BuildConfigAdapterImpl())
                 .build());
+
+        if (App.getBuildConfigAdapter().isDebug()) {
+            LogUtil.enableLog();
+        }
         new IShareConfig.Builder()
                 .setQQ(QQ_APP_ID, QQ_APP_KEY)
                 .setWeixin(WEIXIN_APP_KEY, WEIXIN_APP_SECRET)
