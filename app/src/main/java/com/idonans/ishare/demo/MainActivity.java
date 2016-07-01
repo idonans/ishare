@@ -13,6 +13,8 @@ import com.idonans.acommon.util.ViewUtil;
 import com.idonans.ishare.qq.IShareQQHelper;
 import com.idonans.ishare.weibo.IShareWeiboHelper;
 import com.idonans.ishare.weixin.IShareWeixinHelper;
+import com.sina.weibo.sdk.api.share.BaseResponse;
+import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
@@ -43,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(AppContext.getContext(), "微信客户端未安装或版本过低", Toast.LENGTH_SHORT).show();
     }
 
+    public static void showWeiboClientWarning() {
+        Toast.makeText(AppContext.getContext(), "微博客户端未安装或版本过低", Toast.LENGTH_SHORT).show();
+    }
+
     private static final String TAG = "MainActivity";
     private IShareQQHelper mIShareQQHelper;
     private IShareWeixinHelper mIShareWeixinHelper;
@@ -54,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         mIShareQQHelper = new IShareQQHelper(mQQUIListener);
         mIShareWeixinHelper = new IShareWeixinHelper(mWXListener);
-        mIShareWeiboHelper = new IShareWeiboHelper(this, mWeiboAuthListener);
+        mIShareWeiboHelper = new IShareWeiboHelper(this, mWeiboAuthListener, mWeiboShareListener);
 
         setContentView(R.layout.activity_main);
 
@@ -154,6 +160,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         View weiboShare = ViewUtil.findViewByID(this, R.id.weibo_share);
+        weiboShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IWeiboShareAPI api = mIShareWeiboHelper.getIWeiboShareAPI();
+                if (api == null) {
+                    showWeiboClientWarning();
+                } else {
+                    // TODO
+                }
+            }
+        });
     }
 
     private IUiListener mQQUIListener = new IUiListener() {
@@ -208,6 +225,16 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private IShareWeiboHelper.WeiboShareListener mWeiboShareListener = new IShareWeiboHelper.WeiboShareListener() {
+
+        private static final String TAG = "MainActivity mWeiboShareListener";
+
+        @Override
+        public void onWeiboShareCallback(BaseResponse baseResponse) {
+            CommonLog.d(TAG + " onWeiboShareCallback " + baseResponse);
+        }
+    };
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (!mIShareQQHelper.onActivityResult(requestCode, resultCode, data)) {
@@ -220,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mIShareWeixinHelper.resume();
+        mIShareWeiboHelper.resume();
     }
 
     @Override
