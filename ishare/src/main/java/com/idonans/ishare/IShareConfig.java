@@ -14,6 +14,7 @@ public final class IShareConfig {
 
     private static String sWeiboAppKey;
     private static String sWeiboAppSecret;
+    private static String sWeiboRedirectUrl;
 
     private static void init(Builder builder) {
         sQQAppId = builder.mQQAppId;
@@ -24,6 +25,7 @@ public final class IShareConfig {
 
         sWeiboAppKey = builder.mWeiboAppKey;
         sWeiboAppSecret = builder.mWeiboAppSecret;
+        sWeiboRedirectUrl = builder.mWeiboRedirectUrl;
     }
 
     public static String getQQAppId() {
@@ -40,6 +42,10 @@ public final class IShareConfig {
 
     public static String getWeiboAppSecret() {
         return sWeiboAppSecret;
+    }
+
+    public static String getWeiboRedirectUrl() {
+        return sWeiboRedirectUrl;
     }
 
     public static String getWeixinAppKey() {
@@ -59,6 +65,7 @@ public final class IShareConfig {
 
         private String mWeiboAppKey;
         private String mWeiboAppSecret;
+        private String mWeiboRedirectUrl = "https://api.weibo.com/oauth2/default.html";
 
         public Builder setQQ(String appId, String appKey) {
             mQQAppId = appId;
@@ -75,6 +82,11 @@ public final class IShareConfig {
         public Builder setWeibo(String appKey, String appSecret) {
             mWeiboAppKey = appKey;
             mWeiboAppSecret = appSecret;
+            return this;
+        }
+
+        public Builder setWeiboRedirectUrl(String redirectUrl) {
+            mWeiboRedirectUrl = redirectUrl;
             return this;
         }
 
