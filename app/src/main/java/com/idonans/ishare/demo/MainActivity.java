@@ -11,7 +11,11 @@ import com.idonans.acommon.lang.CommonLog;
 import com.idonans.acommon.util.IOUtil;
 import com.idonans.acommon.util.ViewUtil;
 import com.idonans.ishare.qq.IShareQQHelper;
+import com.idonans.ishare.weibo.IShareWeiboHelper;
 import com.idonans.ishare.weixin.IShareWeixinHelper;
+import com.sina.weibo.sdk.auth.WeiboAuthListener;
+import com.sina.weibo.sdk.auth.sso.SsoHandler;
+import com.sina.weibo.sdk.exception.WeiboException;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
 import com.tencent.mm.sdk.modelbase.BaseResp;
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private IShareQQHelper mIShareQQHelper;
     private IShareWeixinHelper mIShareWeixinHelper;
+    private IShareWeiboHelper mIShareWeiboHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         mIShareQQHelper = new IShareQQHelper(mQQUIListener);
         mIShareWeixinHelper = new IShareWeixinHelper(mWXListener);
+        mIShareWeiboHelper = new IShareWeiboHelper(this, mWeiboAuthListener);
 
         setContentView(R.layout.activity_main);
 
@@ -139,6 +145,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         View weiboLogin = ViewUtil.findViewByID(this, R.id.weibo_login);
+        weiboLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SsoHandler ssoHandler = mIShareWeiboHelper.getSsoHandler();
+                ssoHandler.authorize(mIShareWeiboHelper.getListener());
+            }
+        });
         View weiboShare = ViewUtil.findViewByID(this, R.id.weibo_share);
     }
 
@@ -172,9 +185,31 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private WeiboAuthListener mWeiboAuthListener = new WeiboAuthListener() {
+
+        private static final String TAG = "MainActivity mWeiboAuthListener";
+
+        @Override
+        public void onComplete(Bundle bundle) {
+            CommonLog.d(TAG + " onComplete " + bundle);
+        }
+
+        @Override
+        public void onWeiboException(WeiboException e) {
+            CommonLog.d(TAG + " onWeiboException");
+            e.printStackTrace();
+        }
+
+        @Override
+        public void onCancel() {
+            CommonLog.d(TAG + " onCancel");
+        }
+    };
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (!mIShareQQHelper.onActivityResult(requestCode, resultCode, data)) {
+            mIShareWeiboHelper.onActivityResult(requestCode, resultCode, data);
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -190,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         IOUtil.closeQuietly(mIShareQQHelper);
         IOUtil.closeQuietly(mIShareWeixinHelper);
+        IOUtil.closeQuietly(mIShareWeiboHelper);
     }
 
 }
