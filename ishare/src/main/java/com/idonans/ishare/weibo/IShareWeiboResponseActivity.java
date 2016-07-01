@@ -5,13 +5,15 @@ import android.os.Bundle;
 
 import com.idonans.acommon.app.CommonActivity;
 import com.idonans.acommon.util.IOUtil;
+import com.sina.weibo.sdk.api.share.BaseResponse;
+import com.sina.weibo.sdk.api.share.IWeiboHandler;
 import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
 
 /**
  * 接收微博分享的响应结果
  * Created by pengji on 16-7-1.
  */
-public class IShareWeiboResponseActivity extends CommonActivity {
+public class IShareWeiboResponseActivity extends CommonActivity implements IWeiboHandler.Response {
 
     private static final String TAG = "IShareWeiboResponseActivity";
     private IShareWeiboHelper mIShareWeiboHelper;
@@ -34,7 +36,7 @@ public class IShareWeiboResponseActivity extends CommonActivity {
     private void handleIntent(Intent intent) {
         IWeiboShareAPI api = mIShareWeiboHelper.getIWeiboShareAPI();
         if (api != null) {
-            api.handleWeiboResponse(intent, IShareWeiboHelper.getGlobalWeiboHandlerResponseAdapter());
+            api.handleWeiboResponse(intent, this);
         }
     }
 
@@ -42,6 +44,12 @@ public class IShareWeiboResponseActivity extends CommonActivity {
     protected void onDestroy() {
         super.onDestroy();
         IOUtil.closeQuietly(mIShareWeiboHelper);
+    }
+
+    @Override
+    public void onResponse(BaseResponse baseResponse) {
+        IWeiboHandler.Response handler = IShareWeiboHelper.getGlobalWeiboHandlerResponseAdapter();
+        handler.onResponse(baseResponse);
     }
 
 }
