@@ -32,7 +32,7 @@ public final class IShareWeiboHelper implements Closeable {
         mAuthInfo = new AuthInfo(activity, IShareConfig.getWeiboAppKey(), IShareConfig.getWeiboRedirectUrl(), null);
         mSsoHandler = new SsoHandler(activity, mAuthInfo);
 
-        // fix sdk bug: sso 客户端授权时，如果当前 app 被回收，需要恢复参数. 主要需要避免这些参数被混淆
+        // fix sdk bug: sso 客户端授权时，如果当前 app 被回收，需要恢复参数. 注意需要避免这些参数被混淆
         try {
             {
                 Field field = SsoHandler.class.getDeclaredField("mSSOAuthRequestCode");
