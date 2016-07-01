@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                     showWeiboClientWarning();
                 } else {
                     TextObject textObject = new TextObject();
-                    textObject.text = "ishare weibo test";
+                    textObject.text = "ishare weibo test code";
                     WeiboMultiMessage weiboMultiMessage = new WeiboMultiMessage();
                     weiboMultiMessage.textObject = textObject;
 
