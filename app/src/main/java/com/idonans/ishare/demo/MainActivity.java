@@ -13,8 +13,11 @@ import com.idonans.acommon.util.ViewUtil;
 import com.idonans.ishare.qq.IShareQQHelper;
 import com.idonans.ishare.weibo.IShareWeiboHelper;
 import com.idonans.ishare.weixin.IShareWeixinHelper;
+import com.sina.weibo.sdk.api.TextObject;
+import com.sina.weibo.sdk.api.WeiboMultiMessage;
 import com.sina.weibo.sdk.api.share.BaseResponse;
 import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
+import com.sina.weibo.sdk.api.share.SendMultiMessageToWeiboRequest;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
@@ -33,7 +36,6 @@ import com.tencent.tauth.UiError;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -143,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                     mediaMessage.description = "ishare weixin text desc";
 
                     SendMessageToWX.Req req = new SendMessageToWX.Req();
-                    req.transaction = UUID.randomUUID().toString() + "#test text#" + System.currentTimeMillis();
+                    req.transaction = "" + System.currentTimeMillis();
                     req.message = mediaMessage;
                     req.scene = SendMessageToWX.Req.WXSceneSession;
                     api.sendReq(req);
@@ -167,7 +169,15 @@ public class MainActivity extends AppCompatActivity {
                 if (api == null) {
                     showWeiboClientWarning();
                 } else {
-                    // TODO
+                    TextObject textObject = new TextObject();
+                    textObject.text = "ishare weibo test";
+                    WeiboMultiMessage weiboMultiMessage = new WeiboMultiMessage();
+                    weiboMultiMessage.textObject = textObject;
+
+                    SendMultiMessageToWeiboRequest request = new SendMultiMessageToWeiboRequest();
+                    request.transaction = "" + System.currentTimeMillis();
+                    request.multiMessage = weiboMultiMessage;
+                    api.sendRequest(mIShareWeiboHelper.getActivity(), request);
                 }
             }
         });

@@ -27,6 +27,7 @@ import java.lang.reflect.Field;
  */
 public final class IShareWeiboHelper implements Closeable {
 
+    private final Activity mActivity;
     private final WeiboAuthListenerAdapter mListener;
     private final AuthInfo mAuthInfo;
     private final SsoHandler mSsoHandler;
@@ -36,6 +37,7 @@ public final class IShareWeiboHelper implements Closeable {
     private final WeiboShareListenerAdapter mShareListenerAdapter;
 
     public IShareWeiboHelper(Activity activity, WeiboAuthListener listener, WeiboShareListener shareListener) {
+        mActivity = activity;
         mListener = new WeiboAuthListenerAdapter();
         mListener.setOutListener(listener);
 
@@ -60,8 +62,12 @@ public final class IShareWeiboHelper implements Closeable {
 
         mShareListenerAdapter = new WeiboShareListenerAdapter();
         mShareListenerAdapter.setOutListener(shareListener);
-        mIWeiboShareAPI = WeiboShareSDK.createWeiboAPI(null, IShareConfig.getWeiboAppKey(), false);
+        mIWeiboShareAPI = WeiboShareSDK.createWeiboAPI(activity, IShareConfig.getWeiboAppKey(), false);
         mIWeiboShareAPI.registerApp();
+    }
+
+    public Activity getActivity() {
+        return mActivity;
     }
 
     public void resume() {
