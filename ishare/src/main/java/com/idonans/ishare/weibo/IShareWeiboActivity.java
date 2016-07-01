@@ -14,9 +14,9 @@ import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
  * 接收微博分享的响应结果
  * Created by pengji on 16-7-1.
  */
-public class IShareWeiboResponseActivity extends CommonActivity implements IWeiboHandler.Response {
+public class IShareWeiboActivity extends CommonActivity implements IWeiboHandler.Response {
 
-    private static final String TAG = "IShareWeiboResponseActivity";
+    private static final String TAG = "IShareWeiboActivity";
     private IShareWeiboHelper mIShareWeiboHelper;
 
     @Override

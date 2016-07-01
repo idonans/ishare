@@ -25,7 +25,7 @@
         </activity>
 
         <activity
-            android:name="com.idonans.ishare.weibo.IShareWeiboResponseActivity"
+            android:name="com.idonans.ishare.weibo.IShareWeiboActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait">
             <intent-filter>
