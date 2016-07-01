@@ -13,6 +13,7 @@ import com.sina.weibo.sdk.exception.WeiboException;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 /**
  * 微博登陆分享
@@ -30,6 +31,22 @@ public final class IShareWeiboHelper implements Closeable {
 
         mAuthInfo = new AuthInfo(activity, IShareConfig.getWeiboAppKey(), IShareConfig.getWeiboRedirectUrl(), null);
         mSsoHandler = new SsoHandler(activity, mAuthInfo);
+
+        // fix sdk bug: sso 客户端授权时，如果当前 app 被回收，需要恢复参数. 主要需要避免这些参数被混淆
+        try {
+            {
+                Field field = SsoHandler.class.getDeclaredField("mSSOAuthRequestCode");
+                field.setAccessible(true);
+                field.setInt(mSsoHandler, 32973);
+            }
+            {
+                Field field = SsoHandler.class.getDeclaredField("mAuthListener");
+                field.setAccessible(true);
+                field.set(mSsoHandler, getListener());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public SsoHandler getSsoHandler() {
