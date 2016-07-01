@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.idonans.acommon.app.CommonActivity;
+import com.idonans.acommon.lang.CommonLog;
 import com.idonans.acommon.util.IOUtil;
 import com.sina.weibo.sdk.api.share.BaseResponse;
 import com.sina.weibo.sdk.api.share.IWeiboHandler;
@@ -21,6 +22,7 @@ public class IShareWeiboResponseActivity extends CommonActivity implements IWeib
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CommonLog.d(TAG + " onCreate");
         mIShareWeiboHelper = new IShareWeiboHelper(this, null, null);
         handleIntent(getIntent());
         finish();
@@ -29,6 +31,7 @@ public class IShareWeiboResponseActivity extends CommonActivity implements IWeib
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        CommonLog.d(TAG + " onNewIntent");
         handleIntent(intent);
         finish();
     }
@@ -43,11 +46,13 @@ public class IShareWeiboResponseActivity extends CommonActivity implements IWeib
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        CommonLog.d(TAG + " onDestroy");
         IOUtil.closeQuietly(mIShareWeiboHelper);
     }
 
     @Override
     public void onResponse(BaseResponse baseResponse) {
+        CommonLog.d(TAG + " onResponse");
         IWeiboHandler.Response handler = IShareWeiboHelper.getGlobalWeiboHandlerResponseAdapter();
         handler.onResponse(baseResponse);
     }
