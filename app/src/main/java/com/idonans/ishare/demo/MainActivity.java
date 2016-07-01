@@ -13,6 +13,7 @@ import com.idonans.acommon.util.ViewUtil;
 import com.idonans.ishare.qq.IShareQQHelper;
 import com.idonans.ishare.weibo.IShareWeiboHelper;
 import com.idonans.ishare.weixin.IShareWeixinHelper;
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
@@ -191,7 +192,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onComplete(Bundle bundle) {
-            CommonLog.d(TAG + " onComplete " + bundle);
+            Oauth2AccessToken token = Oauth2AccessToken.parseAccessToken(bundle);
+            CommonLog.d(TAG + " onComplete " + token);
         }
 
         @Override

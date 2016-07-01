@@ -3,9 +3,15 @@ package com.idonans.ishare.weibo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 
+import com.idonans.acommon.lang.CommonLog;
 import com.idonans.ishare.IShareConfig;
+import com.sina.weibo.sdk.api.share.BaseResponse;
+import com.sina.weibo.sdk.api.share.IWeiboHandler;
+import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
+import com.sina.weibo.sdk.api.share.WeiboShareSDK;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
@@ -25,7 +31,11 @@ public final class IShareWeiboHelper implements Closeable {
     private final AuthInfo mAuthInfo;
     private final SsoHandler mSsoHandler;
 
-    public IShareWeiboHelper(Activity activity, WeiboAuthListener listener) {
+    private static final GlobalWeiboHandlerResponseAdapter sGlobalWeiboHandlerResponseAdapter = new GlobalWeiboHandlerResponseAdapter();
+    private final IWeiboShareAPI mIWeiboShareAPI;
+    private final WeiboShareListenerAdapter mShareListenerAdapter;
+
+    public IShareWeiboHelper(Activity activity, WeiboAuthListener listener, WeiboShareListener shareListener) {
         mListener = new WeiboAuthListenerAdapter();
         mListener.setOutListener(listener);
 
@@ -47,6 +57,15 @@ public final class IShareWeiboHelper implements Closeable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        mShareListenerAdapter = new WeiboShareListenerAdapter();
+        mShareListenerAdapter.setOutListener(shareListener);
+        mIWeiboShareAPI = WeiboShareSDK.createWeiboAPI(null, IShareConfig.getWeiboAppKey(), false);
+        mIWeiboShareAPI.registerApp();
+    }
+
+    public void resume() {
+        sGlobalWeiboHandlerResponseAdapter.setListenerProxy(mShareListenerAdapter);
     }
 
     public SsoHandler getSsoHandler() {
@@ -58,6 +77,20 @@ public final class IShareWeiboHelper implements Closeable {
         return mListener;
     }
 
+    /**
+     * 如果没有安装微博客户端，或者微博客户端版本不支持，将返回 null.
+     *
+     * @return
+     */
+    @CheckResult
+    public IWeiboShareAPI getIWeiboShareAPI() {
+        if (mIWeiboShareAPI.isWeiboAppSupportAPI()) {
+            return mIWeiboShareAPI;
+        } else {
+            return null;
+        }
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
     }
@@ -65,6 +98,11 @@ public final class IShareWeiboHelper implements Closeable {
     @Override
     public void close() throws IOException {
         mListener.setOutListener(null);
+        mShareListenerAdapter.setOutListener(null);
+    }
+
+    public interface WeiboShareListener {
+        void onWeiboShareCallback(BaseResponse baseResponse);
     }
 
     private static class WeiboAuthListenerAdapter implements WeiboAuthListener {
@@ -93,6 +131,53 @@ public final class IShareWeiboHelper implements Closeable {
         public void onCancel() {
             if (mOutListener != null) {
                 mOutListener.onCancel();
+            }
+        }
+
+    }
+
+    private static class WeiboShareListenerAdapter implements WeiboShareListener {
+
+        private WeiboShareListener mOutListener;
+
+        public void setOutListener(WeiboShareListener outListener) {
+            mOutListener = outListener;
+        }
+
+        @Override
+        public void onWeiboShareCallback(BaseResponse baseResponse) {
+            if (mOutListener != null) {
+                mOutListener.onWeiboShareCallback(baseResponse);
+            }
+        }
+    }
+
+    public static GlobalWeiboHandlerResponseAdapter getGlobalWeiboHandlerResponseAdapter() {
+        return sGlobalWeiboHandlerResponseAdapter;
+    }
+
+    private static class GlobalWeiboHandlerResponseAdapter implements IWeiboHandler.Response {
+
+        private static final String TAG = "GlobalWeiboHandlerResponseAdapter";
+        private WeiboShareListener mListenerProxy;
+        private BaseResponse mPendingBaseResponse;
+
+        public void setListenerProxy(WeiboShareListener listenerProxy) {
+            mListenerProxy = listenerProxy;
+            if (mPendingBaseResponse != null) {
+                mListenerProxy.onWeiboShareCallback(mPendingBaseResponse);
+                mPendingBaseResponse = null;
+            }
+        }
+
+        @Override
+        public void onResponse(BaseResponse baseResponse) {
+            CommonLog.d(TAG + " onResponse " + baseResponse);
+            if (mListenerProxy != null) {
+                mPendingBaseResponse = null;
+                mListenerProxy.onWeiboShareCallback(baseResponse);
+            } else {
+                mPendingBaseResponse = baseResponse;
             }
         }
 
