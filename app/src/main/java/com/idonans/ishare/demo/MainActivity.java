@@ -180,45 +180,50 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onQQComplete(Object o) {
-            CommonLog.d(TAG + " onQQComplete " + o);
+            showLog(TAG + " onQQComplete " + o);
         }
 
         @Override
         public void onQQError(UiError uiError) {
-            CommonLog.d(TAG + " onQQError " + uiError);
+            showLog(TAG + " onQQError " + uiError);
         }
 
         @Override
         public void onQQCancel() {
-            CommonLog.d(TAG + " onQQCancel");
+            showLog(TAG + " onQQCancel");
         }
 
         @Override
         public void onWeixinCallback(BaseResp baseResp) {
-            CommonLog.d(TAG + " onWeixinCallback " + baseResp);
+            showLog(TAG + " onWeixinCallback " + baseResp);
         }
 
         @Override
         public void onWeiboAuthComplete(Bundle bundle) {
-            CommonLog.d(TAG + " onWeiboAuthComplete " + bundle);
+            showLog(TAG + " onWeiboAuthComplete " + bundle);
         }
 
         @Override
         public void onWeiboAuthException(WeiboException e) {
-            CommonLog.d(TAG + " onWeiboAuthException " + e);
+            showLog(TAG + " onWeiboAuthException " + e);
             e.printStackTrace();
         }
 
         @Override
         public void onWeiboAuthCancel() {
-            CommonLog.d(TAG + " onWeiboAuthCancel");
+            showLog(TAG + " onWeiboAuthCancel");
         }
 
         @Override
         public void onWeiboShareCallback(BaseResponse baseResponse) {
-            CommonLog.d(TAG + " onWeiboShareCallback " + baseResponse);
+            showLog(TAG + " onWeiboShareCallback " + baseResponse);
         }
     };
+
+    private static void showLog(String log) {
+        CommonLog.d(log);
+        Toast.makeText(AppContext.getContext(), log, Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
