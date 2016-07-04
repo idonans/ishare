@@ -10,16 +10,12 @@ import com.idonans.acommon.AppContext;
 import com.idonans.acommon.lang.CommonLog;
 import com.idonans.acommon.util.IOUtil;
 import com.idonans.acommon.util.ViewUtil;
-import com.idonans.ishare.qq.IShareQQHelper;
-import com.idonans.ishare.weibo.IShareWeiboHelper;
-import com.idonans.ishare.weixin.IShareWeixinHelper;
+import com.idonans.ishare.IShareHelper;
 import com.sina.weibo.sdk.api.TextObject;
 import com.sina.weibo.sdk.api.WeiboMultiMessage;
 import com.sina.weibo.sdk.api.share.BaseResponse;
 import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
 import com.sina.weibo.sdk.api.share.SendMultiMessageToWeiboRequest;
-import com.sina.weibo.sdk.auth.Oauth2AccessToken;
-import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.tencent.connect.share.QQShare;
@@ -30,7 +26,6 @@ import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.sdk.modelmsg.WXTextObject;
 import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
@@ -52,17 +47,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static final String TAG = "MainActivity";
-    private IShareQQHelper mIShareQQHelper;
-    private IShareWeixinHelper mIShareWeixinHelper;
-    private IShareWeiboHelper mIShareWeiboHelper;
+    private IShareHelper mIShareHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mIShareQQHelper = new IShareQQHelper(mQQUIListener);
-        mIShareWeixinHelper = new IShareWeixinHelper(mWXListener);
-        mIShareWeiboHelper = new IShareWeiboHelper(this, mWeiboAuthListener, mWeiboShareListener);
+        mIShareHelper = new IShareHelper(this, mIShareListener);
 
         setContentView(R.layout.activity_main);
 
@@ -70,11 +61,11 @@ public class MainActivity extends AppCompatActivity {
         qqLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Tencent tencent = mIShareQQHelper.getTencent(MainActivity.this);
+                Tencent tencent = mIShareHelper.getIShareQQHelper().getTencent(MainActivity.this);
                 if (tencent == null) {
                     showQQClientWarning();
                 } else {
-                    tencent.login(MainActivity.this, "get_simple_userinfo", mIShareQQHelper.getListener());
+                    tencent.login(MainActivity.this, "get_simple_userinfo", mIShareHelper.getIShareQQHelper().getListener());
                 }
             }
         });
@@ -83,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         qqShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Tencent tencent = mIShareQQHelper.getTencent(MainActivity.this);
+                Tencent tencent = mIShareHelper.getIShareQQHelper().getTencent(MainActivity.this);
                 if (tencent == null) {
                     showQQClientWarning();
                 } else {
@@ -92,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, "https://www.github.com/idonans/ishare");
                     params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "https://avatars3.githubusercontent.com/u/4043830?v=3&s=460");
                     params.putString(QQShare.SHARE_TO_QQ_SUMMARY, "ishare qq");
-                    tencent.shareToQQ(MainActivity.this, params, mIShareQQHelper.getListener());
+                    tencent.shareToQQ(MainActivity.this, params, mIShareHelper.getIShareQQHelper().getListener());
                 }
             }
         });
@@ -101,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         qzoneShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Tencent tencent = mIShareQQHelper.getTencent(MainActivity.this);
+                Tencent tencent = mIShareHelper.getIShareQQHelper().getTencent(MainActivity.this);
                 if (tencent == null) {
                     showQQClientWarning();
                 } else {
@@ -111,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     params.putStringArrayList(QzoneShare.SHARE_TO_QQ_IMAGE_URL,
                             new ArrayList<>(Arrays.asList("https://avatars3.githubusercontent.com/u/4043830?v=3&s=460")));
                     params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, "ishare qzone");
-                    tencent.shareToQzone(MainActivity.this, params, mIShareQQHelper.getListener());
+                    tencent.shareToQzone(MainActivity.this, params, mIShareHelper.getIShareQQHelper().getListener());
                 }
             }
         });
@@ -120,13 +111,13 @@ public class MainActivity extends AppCompatActivity {
         weixinLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IWXAPI api = mIShareWeixinHelper.getApi();
+                IWXAPI api = mIShareHelper.getIShareWeixinHelper().getApi();
                 if (api == null) {
                     showWeixinClientWarning();
                 } else {
                     SendAuth.Req req = new SendAuth.Req();
                     req.scope = "snsapi_userinfo";
-                    req.state = mIShareWeixinHelper.getState();
+                    req.state = mIShareHelper.getIShareWeixinHelper().getState();
                     api.sendReq(req);
                 }
             }
@@ -136,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         weixinShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IWXAPI api = mIShareWeixinHelper.getApi();
+                IWXAPI api = mIShareHelper.getIShareWeixinHelper().getApi();
                 if (api == null) {
                     showWeixinClientWarning();
                 } else {
@@ -157,15 +148,15 @@ public class MainActivity extends AppCompatActivity {
         weiboLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SsoHandler ssoHandler = mIShareWeiboHelper.getSsoHandler();
-                ssoHandler.authorize(mIShareWeiboHelper.getListener());
+                SsoHandler ssoHandler = mIShareHelper.getIShareWeiboHelper().getSsoHandler();
+                ssoHandler.authorize(mIShareHelper.getIShareWeiboHelper().getListener());
             }
         });
         View weiboShare = ViewUtil.findViewByID(this, R.id.weibo_share);
         weiboShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IWeiboShareAPI api = mIShareWeiboHelper.getIWeiboShareAPI();
+                IWeiboShareAPI api = mIShareHelper.getIShareWeiboHelper().getIWeiboShareAPI();
                 if (api == null) {
                     showWeiboClientWarning();
                 } else {
@@ -177,67 +168,51 @@ public class MainActivity extends AppCompatActivity {
                     SendMultiMessageToWeiboRequest request = new SendMultiMessageToWeiboRequest();
                     request.transaction = "" + System.currentTimeMillis();
                     request.multiMessage = weiboMultiMessage;
-                    api.sendRequest(mIShareWeiboHelper.getActivity(), request);
+                    api.sendRequest(mIShareHelper.getIShareWeiboHelper().getActivity(), request);
                 }
             }
         });
     }
 
-    private IUiListener mQQUIListener = new IUiListener() {
+    private IShareHelper.IShareListener mIShareListener = new IShareHelper.IShareListener() {
 
-        private static final String TAG = "MainActivity mQQUIListener";
+        private static final String TAG = "MainActivity mIShareListener";
 
         @Override
-        public void onComplete(Object o) {
-            CommonLog.d(TAG + " onComplete " + o);
+        public void onQQComplete(Object o) {
+            CommonLog.d(TAG + " onQQComplete " + o);
         }
 
         @Override
-        public void onError(UiError uiError) {
-            CommonLog.d(TAG + " onError " + uiError.errorCode + ", " + uiError.errorDetail + ", " + uiError.errorMessage);
+        public void onQQError(UiError uiError) {
+            CommonLog.d(TAG + " onQQError " + uiError);
         }
 
         @Override
-        public void onCancel() {
-            CommonLog.d(TAG + " onCancel");
-        }
-    };
-
-    private IShareWeixinHelper.IWXListener mWXListener = new IShareWeixinHelper.IWXListener() {
-
-        private static final String TAG = "MainActivity mWXListener";
-
-        @Override
-        public void onWXCallback(BaseResp baseResp) {
-            CommonLog.d(TAG + " onWXCallback " + baseResp);
-        }
-    };
-
-    private WeiboAuthListener mWeiboAuthListener = new WeiboAuthListener() {
-
-        private static final String TAG = "MainActivity mWeiboAuthListener";
-
-        @Override
-        public void onComplete(Bundle bundle) {
-            Oauth2AccessToken token = Oauth2AccessToken.parseAccessToken(bundle);
-            CommonLog.d(TAG + " onComplete " + token);
+        public void onQQCancel() {
+            CommonLog.d(TAG + " onQQCancel");
         }
 
         @Override
-        public void onWeiboException(WeiboException e) {
-            CommonLog.d(TAG + " onWeiboException");
+        public void onWeixinCallback(BaseResp baseResp) {
+            CommonLog.d(TAG + " onWeixinCallback " + baseResp);
+        }
+
+        @Override
+        public void onWeiboAuthComplete(Bundle bundle) {
+            CommonLog.d(TAG + " onWeiboAuthComplete " + bundle);
+        }
+
+        @Override
+        public void onWeiboAuthException(WeiboException e) {
+            CommonLog.d(TAG + " onWeiboAuthException " + e);
             e.printStackTrace();
         }
 
         @Override
-        public void onCancel() {
-            CommonLog.d(TAG + " onCancel");
+        public void onWeiboAuthCancel() {
+            CommonLog.d(TAG + " onWeiboAuthCancel");
         }
-    };
-
-    private IShareWeiboHelper.WeiboShareListener mWeiboShareListener = new IShareWeiboHelper.WeiboShareListener() {
-
-        private static final String TAG = "MainActivity mWeiboShareListener";
 
         @Override
         public void onWeiboShareCallback(BaseResponse baseResponse) {
@@ -247,25 +222,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!mIShareQQHelper.onActivityResult(requestCode, resultCode, data)) {
-            mIShareWeiboHelper.onActivityResult(requestCode, resultCode, data);
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+        mIShareHelper.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mIShareWeixinHelper.resume();
-        mIShareWeiboHelper.resume();
+        mIShareHelper.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        IOUtil.closeQuietly(mIShareQQHelper);
-        IOUtil.closeQuietly(mIShareWeixinHelper);
-        IOUtil.closeQuietly(mIShareWeiboHelper);
+        IOUtil.closeQuietly(mIShareHelper);
     }
 
 }

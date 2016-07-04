@@ -12,7 +12,7 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
  * 与微信通信页
  * Created by pengji on 16-6-30.
  */
-public class WXEntryActivity extends CommonActivity {
+public class IShareWXEntryActivity extends CommonActivity {
 
     private IShareWeixinHelper mIShareWeixinHelper;
 
