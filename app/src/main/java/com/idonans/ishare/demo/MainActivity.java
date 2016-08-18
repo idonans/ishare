@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
         weiboShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IWeiboShareAPI api = mIShareHelper.getIShareWeiboHelper().getIWeiboShareAPI();
+                IWeiboShareAPI api = mIShareHelper.getIShareWeiboHelper().getIWeiboShareAPI(false);
                 if (api == null) {
                     showWeiboClientWarning();
                 } else {
