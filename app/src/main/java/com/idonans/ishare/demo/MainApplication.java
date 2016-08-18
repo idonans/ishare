@@ -26,10 +26,11 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         LeakCanary.install(this);
-        App.init(new App.Config.Builder()
+        new App.Config.Builder()
                 .setContext(this)
                 .setBuildConfigAdapter(new BuildConfigAdapterImpl())
-                .build());
+                .build()
+                .init();
 
         if (App.getBuildConfigAdapter().isDebug()) {
             LogUtil.enableLog();
@@ -56,6 +57,16 @@ public class MainApplication extends Application {
         @Override
         public String getLogTag() {
             return BuildConfig.APPLICATION_ID;
+        }
+
+        @Override
+        public String getPublicSubDirName() {
+            return "ishare";
+        }
+
+        @Override
+        public String getChannel() {
+            return "default_channel";
         }
 
         @Override
