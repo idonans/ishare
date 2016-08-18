@@ -84,16 +84,18 @@ public final class IShareWeiboHelper implements Closeable {
     }
 
     /**
-     * 如果没有安装微博客户端，或者微博客户端版本不支持，将返回 null.
-     *
-     * @return
+     * 指定是否校验微博客户端，如果需要校验而没有安装微博客户端，或者微博客户端版本不支持，将返回 null.
      */
     @CheckResult
-    public IWeiboShareAPI getIWeiboShareAPI() {
-        if (mIWeiboShareAPI.isWeiboAppSupportAPI()) {
-            return mIWeiboShareAPI;
+    public IWeiboShareAPI getIWeiboShareAPI(boolean needWeiboApp) {
+        if (needWeiboApp) {
+            if (mIWeiboShareAPI.isWeiboAppSupportAPI()) {
+                return mIWeiboShareAPI;
+            } else {
+                return null;
+            }
         } else {
-            return null;
+            return mIWeiboShareAPI;
         }
     }
 
