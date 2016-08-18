@@ -37,7 +37,7 @@ public class IShareWeiboActivity extends CommonActivity implements IWeiboHandler
     }
 
     private void handleIntent(Intent intent) {
-        IWeiboShareAPI api = mIShareWeiboHelper.getIWeiboShareAPI();
+        IWeiboShareAPI api = mIShareWeiboHelper.getIWeiboShareAPI(false);
         if (api != null) {
             api.handleWeiboResponse(intent, this);
         }
